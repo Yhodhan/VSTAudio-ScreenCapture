@@ -14,8 +14,6 @@ use std::{
     os::raw::c_int,
 };
 
-extern crate image;
-
 pub struct Screenshot {
     data: Vec<u8>,
     height: usize,
