@@ -1,0 +1,13 @@
+C:\Users\glady\vstaudio-screen\vst-filter\target\debug\deps\libtoml-dd824ca3aa06bd85.rmeta: C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\lib.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\map.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\value.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\de.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\ser.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\macros.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\edit.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\fmt.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\table.rs
+
+C:\Users\glady\vstaudio-screen\vst-filter\target\debug\deps\toml-dd824ca3aa06bd85.d: C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\lib.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\map.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\value.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\de.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\ser.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\macros.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\edit.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\fmt.rs C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\table.rs
+
+C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\lib.rs:
+C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\map.rs:
+C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\value.rs:
+C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\de.rs:
+C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\ser.rs:
+C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\macros.rs:
+C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\edit.rs:
+C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\fmt.rs:
+C:\Users\glady\.cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.7.8\src\table.rs:
