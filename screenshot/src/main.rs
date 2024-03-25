@@ -1,3 +1,8 @@
+mod display_info;
+mod screenshot;
+
 fn main() {
-    println!("Hello, world!");
+    unsafe {
+        screenshot::screenshot();
+    }
 }
