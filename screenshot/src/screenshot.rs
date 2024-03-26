@@ -1,109 +1,118 @@
-use winapi::{
-    shared::{minwindef::DWORD, ntdef::LONG},
-    um::{
-        wingdi::{
-            BitBlt, CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject, GetDIBits,
-            SelectObject, BITMAPINFO, BITMAPINFOHEADER, BI_RGB, DIB_RGB_COLORS, RGBQUAD,
-        },
-        winuser::{GetDC, GetDesktopWindow, GetSystemMetrics, ReleaseDC},
-    },
+use image::RgbaImage;
+use std::mem::size_of;
+use windows::Win32::Foundation::{ERROR_INVALID_PARAMETER, HWND};
+use windows::Win32::Graphics::Gdi::{
+    CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject, GetDC, GetDIBits,
+    ReleaseDC, SelectObject, StretchBlt, BITMAPINFO, BITMAPINFOHEADER, BI_RGB, DIB_RGB_COLORS,
+    SRCCOPY,
 };
 
-use std::{
-    mem,
-    os::raw::{c_int, c_void},
+use windows::Win32::UI::WindowsAndMessaging::{
+    GetSystemMetrics, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN, SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN,
 };
 
-pub struct Screenshot {
-    data: Vec<u8>,
-    height: usize,
-    width: usize,
-    row_len: usize,
-    pixel_width: usize,
+pub struct ScreenData {
+    pub width: i32,
+    pub height: i32,
+    pub data: Vec<u8>,
 }
 
-pub unsafe fn screenshot() -> Result<Screenshot, String> {
-    let wnd_screen = GetDesktopWindow();
-    let dc_screen = GetDC(wnd_screen);
-    let width = GetSystemMetrics(0);
-    let height = GetSystemMetrics(1);
+fn capture_screen() -> Result<ScreenData, String> {
+    unsafe {
+        let hdc_screen = GetDC(HWND::default());
+        if hdc_screen.is_invalid() {
+            return Err("Could not fetch Devide context".to_string());
+        }
 
-    // create windows bitmap
-    let h_dc = CreateCompatibleDC(dc_screen);
-    // as in C we have to check that we did not receive a null pointer
+        let hdc = CreateCompatibleDC(hdc_screen);
+        if hdc.is_invalid() {
+            ReleaseDC(HWND::default(), hdc_screen);
+            return Err("Could not create Compatible Device Context".to_string());
+        }
 
-    let bit_map = CreateCompatibleBitmap(h_dc, width, height);
+        let x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+        let y = GetSystemMetrics(SM_YVIRTUALSCREEN);
+        let width = GetSystemMetrics(SM_CXVIRTUALSCREEN);
+        let height = GetSystemMetrics(SM_CYVIRTUALSCREEN);
 
-    let old_obj = SelectObject(h_dc, mem::transmute(bit_map));
+        let hbmp = CreateCompatibleBitmap(hdc_screen, width, height);
+        if hbmp.is_invalid() {
+            DeleteDC(hdc);
+            ReleaseDC(HWND::default(), hdc_screen);
+            return Err("Could not create Bit Map".to_string());
+        }
 
-    let res = BitBlt(
-        h_dc,
-        0,
-        0,
-        width,
-        height,
-        dc_screen,
-        0,
-        0,
-        0x00CC0020 | 0x40000000,
-    );
+        let old_object = SelectObject(hdc, hbmp);
+        if old_object.is_invalid() {
+            DeleteDC(hdc);
+            DeleteObject(hbmp);
+            ReleaseDC(HWND::default(), hdc_screen);
+            return Err("Could not select object from Device Context".to_string());
+        }
 
-    // check error
-    if res == 0 {
-        return Err("Could not copy screen to buffer".to_string());
-    }
+        let sb = StretchBlt(
+            hdc, 0, 0, width, height, hdc_screen, x, y, width, height, SRCCOPY,
+        );
+        if sb == false {
+            DeleteDC(hdc);
+            DeleteObject(hbmp);
+            ReleaseDC(HWND::default(), hdc_screen);
+            return Err("Could not create Stretch Blt".to_string());
+        }
 
-    let pixel_width: usize = 4;
-
-    // This struct is actually deprecated
-    let mut bit_map_info = BITMAPINFO {
-        bmiHeader: BITMAPINFOHEADER {
-            biSize: mem::size_of::<BITMAPINFOHEADER>() as DWORD,
-            biWidth: width as LONG,
-            biHeight: height as LONG,
+        let bmih = BITMAPINFOHEADER {
+            biSize: size_of::<BITMAPINFOHEADER>() as u32,
             biPlanes: 1,
-            biBitCount: 8 * pixel_width as u16,
-            biCompression: BI_RGB,
-            biSizeImage: (width * height * pixel_width as c_int) as DWORD,
-            biXPelsPerMeter: 0,
-            biYPelsPerMeter: 0,
-            biClrUsed: 0,
-            biClrImportant: 0,
-        },
-        bmiColors: [RGBQUAD {
-            rgbBlue: 0,
-            rgbGreen: 0,
-            rgbRed: 0,
-            rgbReserved: 0,
-        }],
-    };
+            biBitCount: 32,
+            biWidth: width,
+            biHeight: -height,
+            biCompression: BI_RGB.0 as u32,
+            ..Default::default()
+        };
 
-    // Create a Vec for image
-    let size: usize = (width * height) as usize * pixel_width;
-    let mut data: Vec<u8> = Vec::with_capacity(size);
-    data.set_len(size);
+        let mut bit_map_info = BITMAPINFO {
+            bmiHeader: bmih,
+            ..Default::default()
+        };
 
-    // copy bits into Vec
-    GetDIBits(
-        h_dc,
-        bit_map,
-        0,
-        height as DWORD,
-        &mut data[0] as *mut u8 as *mut winapi::ctypes::c_void,
-        &mut bit_map_info as *mut BITMAPINFO,
-        DIB_RGB_COLORS,
-    );
+        let mut data: Vec<u8> = vec![0; (4 * width * height) as usize];
 
-    // Release native image buffers
-    ReleaseDC(wnd_screen, dc_screen); // don't need screen anymore
-    DeleteDC(h_dc);
-    DeleteObject(mem::transmute(bit_map));
+        let gdb = GetDIBits(
+            hdc,
+            hbmp,
+            0,
+            height as u32,
+            Some(data.as_mut_ptr() as *mut core::ffi::c_void),
+            &mut bit_map_info,
+            DIB_RGB_COLORS,
+        );
 
-    Ok(Screenshot {
-        data,
-        height: height as usize,
-        width: width as usize,
-        row_len: (width * pixel_width as i32) as usize,
-        pixel_width,
-    })
+        if gdb == 0 || gdb == ERROR_INVALID_PARAMETER.0 as i32 {
+            DeleteDC(hdc);
+            DeleteObject(hbmp);
+            ReleaseDC(HWND::default(), hdc_screen);
+            return Err("Could not fetch DI Bits".to_string());
+        }
+
+        data.chunks_exact_mut(4).for_each(|c| c.swap(0, 2));
+
+        DeleteDC(hdc);
+        DeleteObject(hbmp);
+        ReleaseDC(HWND::default(), hdc_screen);
+
+        Ok(ScreenData {
+            data,
+            height,
+            width,
+        })
+    }
+}
+
+pub fn screenshot() -> Result<(), String> {
+    let s = capture_screen()?;
+    let img = RgbaImage::from_raw(s.width as u32, s.height as u32, s.data)
+        .ok_or_else(|| "Could not obtain image from raw data".to_string())?;
+
+    img.save("screenshot.bmp").map_err(|err| err.to_string())?;
+    Ok(())
 }
