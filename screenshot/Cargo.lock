@@ -772,6 +772,7 @@ dependencies = [
  "image",
  "regex",
  "win-screenshot",
+ "windows",
 ]
 
 [[package]]

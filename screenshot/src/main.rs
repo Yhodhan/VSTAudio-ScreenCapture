@@ -1,9 +1,11 @@
 use image::RgbaImage;
-// use regex::Regex;
-use win_screenshot::prelude::*;
+
+mod handler;
+use handler::capture_screen;
 
 fn main() {
-    let buf = capture_display().unwrap();
-    let img = RgbaImage::from_raw(buf.width, buf.height, buf.pixels).unwrap();
+    let s = capture_screen().unwrap();
+
+    let img = RgbaImage::from_raw(s.width as u32, s.height as u32, s.data).unwrap();
     img.save("screenshot.bmp").unwrap();
 }
