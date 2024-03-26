@@ -16,7 +16,7 @@ fn return_extension(format: &str) -> Result<String, String> {
 
     let extension = match format {
         Some(f) if f == "png" || f == "bmp" => format!("screenshot.{}", f),
-        _ => return Err("Unknown or unsopported format".to_string()),
+        _ => return Err("Unknown or unsupported format".to_string()),
     };
 
     Ok(extension)
