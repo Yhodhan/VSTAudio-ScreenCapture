@@ -3,7 +3,6 @@
   and then distortionates the sound altering the gain of the samples. It is recommended to run it with low    
   volume or otherwise it can produce annoyance in the ears.    
 
-
 ## Table of contents
 - [Development](#development)
 - [Dependencies](#dependencies)
@@ -16,23 +15,15 @@
   
 ## Dependencies 
 
-- Git
-- Rust
-
+  - Git
+  - Rust
   
 ## Usage 
-  Clone the repository
-  ```
-  git clone https://github.com/hixion/VSTAudio-ScreenCapture/tree/main/vst-filter`
-  ```
   
-  then run 
-
+  Inside the root directory run the command: 
   ```
   cargo xtask bundle vst-filter --release
- 
   ```
-
   This will create the file `vst-filter.vst3` inside the `target\bundled\` folder created by the command.
   It is recommended to have a folder in the system where all the VST plugins are stored and then copy paste the produced file inside of it.
   Another option is to set the path in the DAW where the plugin is generated but is not optimal. 
