@@ -10,8 +10,8 @@
 
 ## Development    
   The plugin was developed with Rust using the [Nih-Plug](https://github.com/robbert-vdh/nih-plug) framework which provides an easy way to produce 
-  plugins in VST and CLAP formats, the frameworks uses a crate included in its workspace called `xtask` which is in charge of producing the bundles at compilation time.    
-  The Reaper and Ardour DAWs were used to test the plugin in Windows and linux respectively, but it should work in any other as it is DAW-agnostic.
+  plugings in VST and CLAP formats, the framework uses a crate included in its workspace called `xtask` which is in charge of producing the bundles at compile time.    
+  The Reaper and Ardour DAWs were used to test the pluging in Windows and Linux respectively, but it should work in any other studio as it is DAW-agnostic.
   
 ## Dependencies 
 
@@ -25,6 +25,6 @@
   cargo xtask bundle vst-filter --release
   ```
   This will create the file `vst-filter.vst3` inside the `target\bundled\` folder created by the command.
-  It is recommended to have a folder in the system where all the VST plugins are stored and then copy paste the produced file inside of it.
-  Another option is to set the path in the DAW where the plugin is generated but is not optimal. 
+  It is recommended to have a directory in the system where all the VST files are stored and then copy paste the result inside of it.
+  Another option is to set the path in the DAW where the pluging is generated but is not advisable. 
  
