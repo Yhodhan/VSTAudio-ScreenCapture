@@ -12,7 +12,6 @@ and then produce a png o bmp format screenshot, jpg format is not supported in t
   then run 
 
   ```
-  cargo run
- 
+  cargo run 
   ```
  The program will generate the image with the specified format inside the root directory
