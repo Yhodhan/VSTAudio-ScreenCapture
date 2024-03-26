@@ -1,6 +1,7 @@
 use nih_plug::prelude::*;
 use std::sync::Arc;
 
+// Representation of the filter object
 struct DistortionFilter {
     params: Arc<DistortionFilterParams>,
     sample_rate: f32,
@@ -21,6 +22,7 @@ impl Default for DistortionFilter {
     }
 }
 
+// The default creation sets the params available for the plugin.
 impl Default for DistortionFilterParams {
     fn default() -> Self {
         Self {
@@ -77,6 +79,9 @@ impl Plugin for DistortionFilter {
         true
     }
 
+    // The function responsable for altering the samples to produce the distortion.
+    // The effect is achieved by increasing the gain of the samples.
+    // In this case if increase by one but more can be used producing a more fuzzy sound.
     fn process(
         &mut self,
         buffer: &mut Buffer,
@@ -105,4 +110,5 @@ impl Vst3Plugin for DistortionFilter {
     ];
 }
 
+// The macro produces the VST file.
 nih_export_vst3!(DistortionFilter);
