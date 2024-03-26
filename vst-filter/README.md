@@ -21,7 +21,20 @@
 
   
 ### Usage 
-  Clone the repository `git clone https://github.com/hixion/VSTAudio-ScreenCapture/tree/main/vst-filter` then run `cargo xtask bundle vst-filter --release` inside the root folder.
+  Clone the repository
+  ```
+  git clone https://github.com/hixion/VSTAudio-ScreenCapture/tree/main/vst-filter`
+  ```
+  
+  then run 
+
+  ```
+  cargo xtask bundle vst-filter --release
+ 
+  ```
+  
+  inside the root folder.
+  
   This will create the file `vst-filter.vst3` inside the `target\bundled\` folder created by the command.
   It is recommended to have a folder in the system where all the VST plugins are stored and then copy paste the produced file inside of it.
   Another option is to set the path in the DAW where the plugin is generated but is not optimal. 
