@@ -1,5 +1,5 @@
+use image::RgbaImage;
 use std::mem::size_of;
-use win_screenshot::capture::WSError;
 use windows::Win32::Foundation::{ERROR_INVALID_PARAMETER, HWND};
 use windows::Win32::Graphics::Gdi::{
     CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject, GetDC, GetDIBits,
@@ -17,17 +17,17 @@ pub struct ScreenData {
     pub data: Vec<u8>,
 }
 
-pub fn capture_screen() -> Result<ScreenData, WSError> {
+fn capture_screen() -> Result<ScreenData, String> {
     unsafe {
         let hdc_screen = GetDC(HWND::default());
         if hdc_screen.is_invalid() {
-            return Err(WSError::GetDCIsNull);
+            return Err("Could not fetch Devide context".to_string());
         }
 
         let hdc = CreateCompatibleDC(hdc_screen);
         if hdc.is_invalid() {
             ReleaseDC(HWND::default(), hdc_screen);
-            return Err(WSError::CreateCompatibleDCIsNull);
+            return Err("Could not create Compatible Device Context".to_string());
         }
 
         let x = GetSystemMetrics(SM_XVIRTUALSCREEN);
@@ -39,15 +39,15 @@ pub fn capture_screen() -> Result<ScreenData, WSError> {
         if hbmp.is_invalid() {
             DeleteDC(hdc);
             ReleaseDC(HWND::default(), hdc_screen);
-            return Err(WSError::CreateCompatibleBitmapIsNull);
+            return Err("Could not create Bit Map".to_string());
         }
 
-        let so = SelectObject(hdc, hbmp);
-        if so.is_invalid() {
+        let old_object = SelectObject(hdc, hbmp);
+        if old_object.is_invalid() {
             DeleteDC(hdc);
             DeleteObject(hbmp);
             ReleaseDC(HWND::default(), hdc_screen);
-            return Err(WSError::SelectObjectError);
+            return Err("Could not select object from Device Context".to_string());
         }
 
         let sb = StretchBlt(
@@ -57,7 +57,7 @@ pub fn capture_screen() -> Result<ScreenData, WSError> {
             DeleteDC(hdc);
             DeleteObject(hbmp);
             ReleaseDC(HWND::default(), hdc_screen);
-            return Err(WSError::StretchBltIsZero);
+            return Err("Could not create Stretch Blt".to_string());
         }
 
         let bmih = BITMAPINFOHEADER {
@@ -70,7 +70,7 @@ pub fn capture_screen() -> Result<ScreenData, WSError> {
             ..Default::default()
         };
 
-        let mut bmi = BITMAPINFO {
+        let mut bit_map_info = BITMAPINFO {
             bmiHeader: bmih,
             ..Default::default()
         };
@@ -83,7 +83,7 @@ pub fn capture_screen() -> Result<ScreenData, WSError> {
             0,
             height as u32,
             Some(data.as_mut_ptr() as *mut core::ffi::c_void),
-            &mut bmi,
+            &mut bit_map_info,
             DIB_RGB_COLORS,
         );
 
@@ -91,7 +91,7 @@ pub fn capture_screen() -> Result<ScreenData, WSError> {
             DeleteDC(hdc);
             DeleteObject(hbmp);
             ReleaseDC(HWND::default(), hdc_screen);
-            return Err(WSError::GetDIBitsError);
+            return Err("Could not fetch DI Bits".to_string());
         }
 
         data.chunks_exact_mut(4).for_each(|c| c.swap(0, 2));
@@ -106,4 +106,13 @@ pub fn capture_screen() -> Result<ScreenData, WSError> {
             width,
         })
     }
+}
+
+pub fn screenshot() -> Result<(), String> {
+    let s = capture_screen()?;
+    let img = RgbaImage::from_raw(s.width as u32, s.height as u32, s.data)
+        .ok_or_else(|| "Could not obtain image from raw data".to_string())?;
+
+    img.save("screenshot.bmp").map_err(|err| err.to_string())?;
+    Ok(())
 }

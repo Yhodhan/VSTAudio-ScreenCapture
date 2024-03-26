@@ -7,16 +7,14 @@ edition = "2021"
 
 [dependencies]
 image = "0.25.0"
-win-screenshot = "4.0.7"
-regex = "*"
 
 [dependencies.windows]
 version = "0.53"
 features = [
       "Win32_UI_WindowsAndMessaging",
-          "Win32_Foundation",
-              "Win32_Graphics_Gdi",
-                  "Win32_Storage_Xps",
-                      "Win32_UI_HiDpi"
-                      ]
+      "Win32_Foundation",
+      "Win32_Graphics_Gdi",
+      "Win32_Storage_Xps",
+      "Win32_UI_HiDpi"
+    ]
 
