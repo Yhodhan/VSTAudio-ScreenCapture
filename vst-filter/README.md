@@ -9,7 +9,7 @@
 - [Usage](#usage)
 
 ## Development    
-  The plugin was developed with Rust using the Nih-Plungin framework which provides an easy way to produce 
+  The plugin was developed with Rust using the [Nih-Plungin](https://github.com/robbert-vdh/nih-plug) framework which provides an easy way to produce 
   plugins in VST and CLAP formats, the frameworks uses a crate included in its workspace called `xtask` which is in charge of producing the bundles at compilation time.    
   The Reaper and Ardour DAWs were used to test the plugin in Windows and linux respectively, but it should work in any other as it is DAW-agnostic.
   
